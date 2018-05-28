@@ -52,7 +52,7 @@ Restriction:
     );
 }
 
-$options = getopt('S:s:n:t:r:c:h:p');
+$options = getopt('S:s:n:t:r:c:p:h');
 
 $help    = isset($options['h']);
 $servers = isset($options['S']) ? (array)$options['S'] : [];
