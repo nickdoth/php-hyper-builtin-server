@@ -42,6 +42,7 @@ Example:
     -r   Path for the router script. Default is empty.
     -c   Path for the PEM-encoded certificate.
          Default is \"$cert\".
+    -p   Path for the PHP binary executable. Default is PHP_BINARY.
 
 Restriction:
     - The option -s is only supported on PHP 5.6.0 or later.
@@ -51,7 +52,7 @@ Restriction:
     );
 }
 
-$options = getopt('S:s:n:t:r:c:h');
+$options = getopt('S:s:n:t:r:c:h:p');
 
 $help    = isset($options['h']);
 $servers = isset($options['S']) ? (array)$options['S'] : [];
@@ -60,6 +61,7 @@ $docroot = isset($options['t']) ? current((array)$options['t']) : null;
 $number  = isset($options['n']) ? current((array)$options['n']) : '10';
 $router  = isset($options['r']) ? current((array)$options['r']) : null;
 $cert    = isset($options['c']) ? current((array)$options['c']) : (__DIR__ . '/certificate.pem');
+$php     = isset($options['p']) ? current((array)$options['p']) : PHP_BINARY;
 
 if ($help) {
     usage();
@@ -109,7 +111,7 @@ try {
     $loop = React\EventLoop\Factory::create();
 
     $used_processes = [];
-    $factory = new mpyw\HyperBuiltinServer\BuiltinServerFactory($loop);
+    $factory = new mpyw\HyperBuiltinServer\BuiltinServerFactory($loop, 5, $php);
     $factory
     ->createMultipleAsync($number, '127.0.0.1', $docroot, $router)
     ->then(function (array $processes) use ($loop, $listeners, &$used_processes) {
